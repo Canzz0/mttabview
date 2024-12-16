@@ -34,7 +34,7 @@ const App = () => {
       marginBottom: 15,  
     },  
     headerText: {  
-      color: darkMode ? Colors.DarkText : Colors.LightText,  
+      color: 'black,  
       fontSize: 13,  
       justifyContent: 'flex-start',  
       textAlign: 'center',  
