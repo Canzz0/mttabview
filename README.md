@@ -59,8 +59,7 @@ textstyle: Defines the style for tab headers.
 linestyle: Configures the style of the underline (active tab indicator).
 🎥 Demo
 Check out the gif below to see MtTabView in action, showcasing its seamless tab transitions:
-![MtTabView Demo](demo.gif)
-
+![MtTabView Demo](https://github.com/Canzz0/mttab/blob/main/demo.gif)
 🌟 Advantages
 Easy Integration: Set up in just a few steps.
 Performance Optimized: Efficiently manages dynamic components.
