@@ -51,7 +51,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Canzz0/react-native-mttab.git"
+    "url": "git+https://github.com/Canzz0/mttab"
   },
   "author": "Can <mustafacann43@gmail.com> (https://github.com/Canzz0)",
   "license": "MIT",
