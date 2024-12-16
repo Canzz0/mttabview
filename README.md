@@ -34,7 +34,7 @@ const App = () => {
       marginBottom: 15,  
     },  
     headerText: {  
-      color: 'black,  
+      color: 'black',  
       fontSize: 13,  
       justifyContent: 'flex-start',  
       textAlign: 'center',  
