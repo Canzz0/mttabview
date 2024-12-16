@@ -17,7 +17,7 @@ yarn add mttabview
 🛠️ Usage
 ```typescript
 import React from 'react';  
-import { Mttab } from 'mttabview';  
+import { Mttab } from 'native-mttabview';  
 
 const App = () => {  
   const data = React.useMemo(() => [  
