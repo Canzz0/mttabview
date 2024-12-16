@@ -1,5 +1,5 @@
 {
-  "name": "mtTab",
+  "name": "native-MtTab",
   "version": "0.1.0",
   "description": "A simple React Native library to easily create tab views with customizable styles and smooth transitions.",
   "source": "./src/index.tsx",
