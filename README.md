@@ -9,15 +9,15 @@ Customizable Styles: Personalize the appearance of tab headers and underline (ac
 
 📦 Installation
 ```bash
-npm install mt-tabview  
+npm install mttabview  
 or
-yarn add mt-tabview  
+yarn add mttabview  
 ```
 
 🛠️ Usage
 ```typescript
 import React from 'react';  
-import { Mttab } from 'native-MtTab';  
+import { Mttab } from 'mttabview';  
 
 const App = () => {  
   const data = React.useMemo(() => [  
@@ -59,7 +59,9 @@ textstyle: Defines the style for tab headers.
 linestyle: Configures the style of the underline (active tab indicator).
 🎥 Demo
 Check out the gif below to see MtTabView in action, showcasing its seamless tab transitions:
-![MtTabView Demo](https://github.com/Canzz0/mttab/blob/main/demo.gif)
+![MtTabView Demo](https://github.com/Canzz0/mttabview/blob/main/demo.gif){:width="400" height="250"}
+
+
 🌟 Advantages
 Easy Integration: Set up in just a few steps.
 Performance Optimized: Efficiently manages dynamic components.

@@ -1,0 +1,8 @@
+# .npmignore dosyası
+# Android ve iOS dizinlerini hariç tut
+android/
+ios/
+
+# Diğer gereksiz dosyaları hariç tut
+*.log
+*.tmp
