@@ -17,7 +17,7 @@ yarn add mt-tabview
 🛠️ Usage
 ```typescript
 import React from 'react';  
-import { Mtab } from 'mt-tabview';  
+import { Mttab } from 'mtTab';  
 
 const App = () => {  
   const data = React.useMemo(() => [  
@@ -43,7 +43,7 @@ const App = () => {
   };  
 
   return (  
-    <Mtab  
+    <Mttab  
       textstyle={style.headerText}  
       linestyle={style.underline}  
       data={data}  
