@@ -18,8 +18,7 @@ function Mttab({ data,linestyle,textstyle}: MtabProps){
    const flatListRef = useRef<FlatList>(null);
    const screenWidth = Dimensions.get('window').width;
    const headerScrollRef = useRef<ScrollView>(null);
-   const minTabWidth = 100;
-   const tabWidth = Math.max(screenWidth / data.length, minTabWidth);
+   const tabWidth = 150; // Sabit genişlik
    const renderItem = React.useCallback(({ item }: { item: { key: string; component: JSX.Element } }) => (
      <View style={{paddingHorizontal:10,width:screenWidth}}>
        {item.component}
@@ -78,7 +77,10 @@ function Mttab({ data,linestyle,textstyle}: MtabProps){
                  style={[
                    styles.headerText,
                    textstyle,
+                   { width: '100%' } // Genişliği tamamen kullan
                  ]}
+                 numberOfLines={1}
+                 ellipsizeMode="tail"
                >
                  {item.key}
                </Animated.Text>
@@ -134,7 +136,8 @@ const styles = StyleSheet.create({
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    paddingHorizontal: 5, // padding'i azalt
+    paddingVertical: 10,
   },
   headerText: {
     fontSize: 13,
