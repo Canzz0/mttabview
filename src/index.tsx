@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {  useRef, useState } from 'react';
 import type { TextStyle } from 'react-native';
 import { Animated, Dimensions, FlatList, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -13,14 +13,24 @@ interface TabItem {
  }
 function Mttab({ data,linestyle,textstyle}: MtabProps){
    const scrollX = useRef(new Animated.Value(0)).current;
-   const underlineLeft = useRef(new Animated.Value(0)).current;
+   const underlineLeft = useRef(new Animated.Value(0)).current; 
    const [selectedIndex, setSelectedIndex] = useState(0);
    const flatListRef = useRef<FlatList>(null);
    const screenWidth = Dimensions.get('window').width;
    const headerScrollRef = useRef<ScrollView>(null);
-   const minTabWidth = 120; 
-   const calculatedTabWidth = Math.max(screenWidth / data.length, minTabWidth);
-   const isScrollable = calculatedTabWidth * data.length > screenWidth;
+   const tabLayouts = useRef<{ x: number; width: number }[]>([]);
+   const [isUnderlineInit, setIsUnderlineInit] = useState(false);
+   const [tabWidths, setTabWidths] = useState<number[]>([]);
+   const [useFullWidth, setUseFullWidth] = useState(false);
+   const tabOffsets = React.useMemo(() => {
+     let offsets = [0];
+     if (tabWidths && Array.isArray(tabWidths)) {
+       for (let i = 0; i < tabWidths.length; i++) {
+        offsets[i + 1] = (offsets[i] ?? 0) + (tabWidths[i] ?? 0);
+             }
+     }
+     return offsets;
+   }, [tabWidths]);
    const renderItem = React.useCallback(({ item }: { item: { key: string; component: JSX.Element } }) => (
      <View style={{paddingHorizontal:10,width:screenWidth}}>
        {item.component}
@@ -28,14 +38,6 @@ function Mttab({ data,linestyle,textstyle}: MtabProps){
    ), [selectedIndex]);
  
  
-   useEffect(() => {
-     Animated.spring(underlineLeft, {
-       toValue: (screenWidth / data.length) * selectedIndex,
-       useNativeDriver: false,
-     }).start();
- 
- 
-   }, [selectedIndex]);
   
    const handleTabPress = React.useCallback((index: number) => {
     setSelectedIndex(index);
@@ -44,14 +46,15 @@ function Mttab({ data,linestyle,textstyle}: MtabProps){
       animated: true
     });
 
-    if (isScrollable) {
-      const scrollPosition = index * calculatedTabWidth - (screenWidth - calculatedTabWidth) / 2;
+    const layout = tabLayouts.current[index];
+    if (layout) {
+      const scrollToX = layout.x + layout.width / 2 - screenWidth / 2;
       headerScrollRef.current?.scrollTo({
-        x: Math.max(0, scrollPosition),
+        x: Math.max(0, scrollToX),
         animated: true
       });
     }
- }, [calculatedTabWidth, isScrollable, screenWidth]);
+ }, []);
  
    const handleMomentumScrollEnd = React.useCallback((event: any) => {
      const newIndex = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
@@ -69,23 +72,36 @@ function Mttab({ data,linestyle,textstyle}: MtabProps){
          horizontal
          showsHorizontalScrollIndicator={false}
          contentContainerStyle={styles.headerScrollView}
-         scrollEnabled={isScrollable}
        >
          <View style={styles.view}>
            {data.map((item: { key: string }, index: number) => (
              <TouchableOpacity
                key={`${item.key}`}
                onPress={() => handleTabPress(index)}
-               style={[styles.tabItem, { width: calculatedTabWidth }]}
+               style={[styles.tabItem, useFullWidth ? { width: screenWidth / data.length } : {}]}
+               onLayout={e => {
+                 const { x, width } = e.nativeEvent.layout;
+                 tabLayouts.current[index] = { x, width };
+                 if (index === 0 && !isUnderlineInit) {
+                   underlineLeft.setValue(x);
+                   setIsUnderlineInit(true);
+                 }
+                 setTabWidths(prev => {
+                   const newWidths = [...prev];
+                   newWidths[index] = width;
+                   if (newWidths.filter(Boolean).length === data.length) {
+                     const total = newWidths.reduce((a, b) => a + b, 0);
+                     setUseFullWidth(total < screenWidth);
+                   }
+                   return newWidths;
+                 });
+               }}
              >
                <Animated.Text
                  style={[
                    styles.headerText,
                    textstyle,
-                   { width: '100%' }
                  ]}
-                 numberOfLines={1}
-                 ellipsizeMode="tail"
                >
                  {item.key}
                </Animated.Text>
@@ -97,16 +113,27 @@ function Mttab({ data,linestyle,textstyle}: MtabProps){
            style={[
              styles.underline,
              linestyle,
-             { 
-               width: calculatedTabWidth,
-               transform: [{
-                 translateX: scrollX.interpolate({
-                   inputRange: data.map((_, i) => i * screenWidth),
-                   outputRange: data.map((_, i) => i * calculatedTabWidth),
-                 })
-               }]
-             }
-           ]} 
+             useFullWidth
+               ? {
+                   left: scrollX.interpolate({
+                     inputRange: data.map((_, i) => i * screenWidth),
+                     outputRange: data.map((_, i) => i * (screenWidth / data.length)),
+                   }),
+                   width: screenWidth / data.length,
+                 }
+               : tabWidths.length === data.length
+                 ? {
+                     left: scrollX.interpolate({
+                       inputRange: data.map((_, i) => i * screenWidth),
+                       outputRange: tabOffsets.slice(0, -1),
+                     }),
+                     width: scrollX.interpolate({
+                       inputRange: data.map((_, i) => i * screenWidth),
+                       outputRange: tabWidths,
+                     }),
+                   }
+                 : {},
+           ]}
          />
        </ScrollView>
      </View>
@@ -141,8 +168,7 @@ const styles = StyleSheet.create({
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 5,
-    paddingVertical: 10,
+    padding: 10,
   },
   headerText: {
     fontSize: 13,
